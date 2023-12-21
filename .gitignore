@@ -22,3 +22,6 @@ go.work
 
 # intellij things
 ./idea
+
+#vscode launch file for go
+launch.json
