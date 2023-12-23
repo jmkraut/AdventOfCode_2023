@@ -1,19 +1,25 @@
 package util
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
-func ReadFileToStringSplice(filename string) ([]string, error) {
-	file, err := os.ReadFile(filename)
-	check(err)
+func ReadFileToLines(filePath string) (*bufio.Scanner, error) {
+	fileInput, err := os.Open(filePath)
 
-	return strings.Split(string(file), "\n"), nil
+	if err != nil {
+		return nil, err
+	}
+
+	fileScanner := bufio.NewScanner(fileInput)
+	fileScanner.Split(bufio.ScanLines)
+
+	return fileScanner, nil
 }
 
-func PrintSpliceArray(input []string) {
+func PrintSplice(input []string) {
 	for index, line := range input {
 		fmt.Printf("[%d]: %s", index, line)
 	}
