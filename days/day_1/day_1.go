@@ -12,11 +12,11 @@ const (
 )
 
 func Solve() {
-	fmt.Println(SolvePart1())
-	fmt.Println(SolvePart2())
+	fmt.Println(solvePart1())
+	fmt.Println(solvePart2())
 }
 
-func SolvePart1() string {
+func solvePart1() string {
 	fileScanner, _ := util.ReadFileToLines(DAY_1_FILEPATH)
 
 	total := 0
@@ -31,7 +31,7 @@ func SolvePart1() string {
 	return fmt.Sprintf("Solution D1P1: %d", total)
 }
 
-func SolvePart2() string {
+func solvePart2() string {
 	fileScanner, _ := util.ReadFileToLines(DAY_1_FILEPATH)
 
 	total := 0
