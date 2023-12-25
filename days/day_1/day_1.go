@@ -3,50 +3,20 @@ package days
 import (
 	util "aoc2023/util"
 	"fmt"
-	"os"
 	"regexp"
 	"strconv"
-	"strings"
-	"unicode"
 )
 
 const (
-	DAY_1_FILEPATH = "resources\\day_1\\input_test_part_2.txt"
+	DAY_1_FILEPATH = "resources\\day_1\\input.txt"
 )
 
-func SolvePart1() {
-	fileInput, _ := os.ReadFile(DAY_1_FILEPATH)
-	total := 0
-	var stringBuilder strings.Builder
-
-	for index, char := range fileInput {
-		charAsRune := rune(char)
-
-		if unicode.IsDigit(charAsRune) {
-			stringBuilder.WriteRune(charAsRune)
-		}
-
-		// If the index+1 is the same as the fileinput length we've hit the end of the file
-		if charAsRune == '\n' || index+1 == len(fileInput) {
-			if stringBuilder.Len() >= 2 {
-				stringbuilderFirstAndLast := string(stringBuilder.String()[0]) + string(stringBuilder.String()[stringBuilder.Len()-1])
-				stringbuilderTotal, _ := strconv.Atoi(stringbuilderFirstAndLast)
-				total += stringbuilderTotal
-			} else {
-				// If it's less than 2 in length, we need to repeat the string
-				stringBuilder.WriteString(stringBuilder.String())
-				stringbuilderTotal, _ := strconv.Atoi(stringBuilder.String())
-				total += stringbuilderTotal
-			}
-
-			stringBuilder.Reset()
-		}
-	}
-
-	fmt.Println(strconv.Itoa(total))
+func Solve() {
+	fmt.Println(SolvePart1())
+	fmt.Println(SolvePart2())
 }
 
-func SolvePart1Alt() {
+func SolvePart1() string {
 	fileScanner, _ := util.ReadFileToLines(DAY_1_FILEPATH)
 
 	total := 0
@@ -54,56 +24,58 @@ func SolvePart1Alt() {
 	for fileScanner.Scan() {
 		str := fileScanner.Text()
 		str = regexp.MustCompile(`\D`).ReplaceAllString(str, "")
-		subTotal := 0
 
-		if len(str) > 1 {
-			subTotal, _ = (strconv.Atoi(string(str[0]) + string(str[len(str)-1])))
-		} else {
-			subTotal, _ = (strconv.Atoi(string(str) + string(str)))
-		}
-
-		total += subTotal
+		total += getSubTotalFromString(str)
 	}
 
-	fmt.Print(total)
+	return fmt.Sprintf("Solution D1P1: %d", total)
 }
 
-func SolvePart2() {
+func SolvePart2() string {
 	fileScanner, _ := util.ReadFileToLines(DAY_1_FILEPATH)
 
 	total := 0
-	// stringNumbers := []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
-	// stringNumbers := []string{"one"}
 
 	for fileScanner.Scan() {
 		str := fileScanner.Text()
 
-		var stringNumberResult []string
-		// var leftMost, rightMost int
-
-		// for _, number := range stringNumbers {
-		stringNumberResult = regexp.MustCompile(`(e|t|h|o|u|i|w|r)`).FindAllString(str, -1)
-
-		if len(stringNumberResult) > 0 {
-			for _, result := range stringNumberResult {
-				fmt.Println(result[0])
-			}
-		}
-		// }
-
-		// numberResult = regexp.MustCompile(`\d`).FindAllStringIndex(str, -1)
-		// str := fileScanner.Text()
-		// str = regexp.MustCompile(`\D`).ReplaceAllString(str, "")
-		// subTotal := 0
-
-		// if len(str) > 1 {
-		// 	subTotal, _ = (strconv.Atoi(string(str[0]) + string(str[len(str)-1])))
-		// } else {
-		// 	subTotal, _ = (strconv.Atoi(string(str) + string(str)))
-		// }
-
-		// total += subTotal
+		str = tokenizeString(str)
+		str = regexp.MustCompile(`\D`).ReplaceAllString(str, "")
+		total += getSubTotalFromString(str)
 	}
 
-	fmt.Print(total)
+	return fmt.Sprintf("Solution D1P2: %d", total)
+}
+
+func getSubTotalFromString(str string) int {
+	var subTotal int
+	if len(str) > 1 {
+		subTotal, _ = (strconv.Atoi(string(str[0]) + string(str[len(str)-1])))
+	} else {
+		subTotal, _ = (strconv.Atoi(string(str) + string(str)))
+	}
+
+	return subTotal
+}
+
+func tokenizeString(str string) string {
+	// Tokenize the string numbers to allow them to be countable but without
+	// damaging strings that share a letter e.g. 'eightwothree'
+	tokenizeMap := map[string]string{
+		"one":   "o1e",
+		"two":   "t2o",
+		"three": "t3e",
+		"four":  "f4r",
+		"five":  "f5e",
+		"six":   "s6x",
+		"seven": "s7n",
+		"eight": "e8t",
+		"nine":  "n9e",
+	}
+
+	for key, value := range tokenizeMap {
+		str = regexp.MustCompile(key).ReplaceAllString(str, value)
+	}
+
+	return str
 }
