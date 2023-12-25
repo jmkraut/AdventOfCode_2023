@@ -19,7 +19,7 @@ func ReadFileToLines(filePath string) (*bufio.Scanner, error) {
 	return fileScanner, nil
 }
 
-func PrintSplice(input []string) {
+func PrintStringSplice(input []string) {
 	for index, line := range input {
 		fmt.Printf("[%d]: %s", index, line)
 	}
