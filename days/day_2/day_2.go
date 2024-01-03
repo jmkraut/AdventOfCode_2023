@@ -16,6 +16,7 @@ const (
 
 func Solve() {
 	fmt.Println(solvePart1())
+	fmt.Println(solvePart2())
 }
 
 func solvePart1() string {
@@ -23,12 +24,11 @@ func solvePart1() string {
 
 	gameIdTotal := 0
 	gameIsImpossible := false
-	var cubeRegex [][]string
 
 	for fileScanner.Scan() {
 
 		str := fileScanner.Text()
-		cubeRegex = regexp.MustCompile(`(\d{0,2}) (?:blue|green|red|blue;|green;|red;)`).FindAllStringSubmatch(str, -1)
+		cubeRegex := regexp.MustCompile(`(\d{0,2}) (?:blue|green|red|blue;|green;|red;)`).FindAllStringSubmatch(str, -1)
 
 		for i := 0; i < len(cubeRegex); i++ {
 			cubeTotal, _ := strconv.Atoi(cubeRegex[i][1])
@@ -45,12 +45,49 @@ func solvePart1() string {
 		}
 
 		if !gameIsImpossible {
-			gameRegex := regexp.MustCompile(`Game (\d{1,3}): `).FindStringSubmatch(str)
-			gameId, _ := strconv.Atoi(gameRegex[1])
-			fmt.Printf("Game %d is possible!\n", gameId)
+			gameId, _ := strconv.Atoi(regexp.MustCompile(`Game (\d{1,3}): `).FindStringSubmatch(str)[1])
 			gameIdTotal += gameId
 		}
 	}
 
 	return fmt.Sprintf("Solution D2P1: %d", gameIdTotal)
+}
+
+func solvePart2() string {
+	fileScanner, _ := util.ReadFileToLines(DAY_2_PART_2_TEST_FILEPATH)
+
+	powerOfCubesTotal := 0
+
+	for fileScanner.Scan() {
+
+		str := fileScanner.Text()
+		cubeRegex := regexp.MustCompile(`(\d{0,2}) (?:blue|green|red|blue;|green;|red;)`).FindAllStringSubmatch(str, -1)
+
+		largestBlue := 0
+		largestGreen := 0
+		largestRed := 0
+
+		for i := 0; i < len(cubeRegex); i++ {
+			cubeTotal, _ := strconv.Atoi(cubeRegex[i][1])
+
+			currentBlueIsGreaterThanPrevious := strings.Contains(cubeRegex[i][0], "blue") && cubeTotal > largestBlue
+			currentGreenIsGreaterThanPrevious := strings.Contains(cubeRegex[i][0], "green") && cubeTotal > largestGreen
+			currentRedIsGreaterThanPrevious := strings.Contains(cubeRegex[i][0], "red") && cubeTotal > largestRed
+
+			if currentBlueIsGreaterThanPrevious {
+				largestBlue = cubeTotal
+			}
+			if currentGreenIsGreaterThanPrevious {
+				largestGreen = cubeTotal
+			}
+			if currentRedIsGreaterThanPrevious {
+				largestRed = cubeTotal
+			}
+		}
+
+		powerOfCubesTotal += (largestBlue * largestRed * largestGreen)
+
+	}
+
+	return fmt.Sprintf("Solution D2P2: %d", powerOfCubesTotal)
 }
