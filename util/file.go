@@ -13,8 +13,6 @@ func ReadFileToLines(filePath string) (*bufio.Scanner, error) {
 		return nil, err
 	}
 
-	defer fileInput.Close()
-
 	fileScanner := bufio.NewScanner(fileInput)
 	fileScanner.Split(bufio.ScanLines)
 
@@ -27,8 +25,6 @@ func ReadFileTo2DStringArray(filepath string) ([][]string, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	defer fileInput.Close()
 
 	fileScanner := bufio.NewScanner(fileInput)
 	var stringArray [][]string
